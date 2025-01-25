@@ -3,7 +3,6 @@ import pandas as pd
 import requests
 from transformers import pipeline
 import io
-import unicodedata
 import os
 
 @st.cache_resource
