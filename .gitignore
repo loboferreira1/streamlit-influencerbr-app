@@ -1,0 +1,11 @@
+# Ignore cache files
+_pycache_/
+.streamlit/secrets.toml
+*.pyc
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore environment files
+.env
