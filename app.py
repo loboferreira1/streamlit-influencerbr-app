@@ -4,6 +4,7 @@ import requests
 from transformers import pipeline
 import io
 import unicodedata
+import os
 
 @st.cache_resource
 def load_model():
@@ -14,25 +15,20 @@ def load_model():
 
 sentiment_pipeline = load_model()
 
+
+
 @st.cache_data
 def load_data():
     """
-    Load the dataset from Google Drive using the file ID stored in Streamlit secrets.
+    Load the dataset from Google Drive using the file ID stored as an environment variable.
     """
     try:
-        file_id = st.secrets["google_drive"]["file_id"]
+        file_id = os.getenv("GOOGLE_DRIVE_FILE_ID")
         url = f"https://drive.google.com/uc?id={file_id}"
         response = requests.get(url)
         response.raise_for_status()
 
-        data = pd.read_csv(io.StringIO(response.text), parse_dates=['data'], encoding='utf-8')
-
-        # Normalize text
-        for col in ['perfil', 'experiencia', 'dica']:
-            data[col] = data[col].apply(
-                lambda x: unicodedata.normalize('NFKD', str(x)).encode('ascii', 'ignore').decode('utf-8') if pd.notnull(x) else x
-            )
-        return data
+        return pd.read_csv(io.StringIO(response.text), parse_dates=['data'], encoding='utf-8')
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
